@@ -1,12 +1,12 @@
-# Do Not Stop Writing ✍️🔥
+# Do Not Stop Writing
 
 > Defeat writer's block and enter the flow state instantly. If you stop typing, your progress is deleted.
 
-[**⚡️ Live Demo & Instant Check**](https://donotstopwriting.pages.dev/) | [**Custom Domain**](https://donotstopwriting.com/)
+[**Live Demo & Instant Check**](https://donotstopwriting.pages.dev/) | [**Custom Domain**](https://donotstopwriting.com/)
 
 ---
 
-## 🚀 What is Do Not Stop Writing?
+## What is Do Not Stop Writing?
 
 **Do Not Stop Writing** is a minimalist, premium online writing tool engineered for one core purpose: to help writers break through screen paralysis, conquer self-censorship, and build unshakeable output momentum. 
 
@@ -14,7 +14,7 @@ Commonly described as a **dangerous writing app**, it introduces a high-stakes, 
 
 ---
 
-## ✨ Features
+## Features
 
 - **Goal-Oriented Sessions:**
   - **Time Goals:** Write for 3, 5, 10, 15, 30, or 60 minutes.
@@ -27,7 +27,7 @@ Commonly described as a **dangerous writing app**, it introduces a high-stakes, 
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 - **Framework:** [Astro](https://astro.build/) (v6)
 - **UI Libraries:** [React](https://react.dev/) & [Lucide Icons](https://lucide.dev/)
@@ -36,7 +36,7 @@ Commonly described as a **dangerous writing app**, it introduces a high-stakes, 
 
 ---
 
-## 🧞 Local Development
+## Local Development
 
 All commands are run from the `dir/` directory:
 
