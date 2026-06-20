@@ -68,69 +68,165 @@ import ThemeToggle from '../components/ThemeToggle';
 					Our platform works directly in your browser, allowing you to start writing instantly without creating an account, downloading software, or installing extensions.
 				</p>
 			</div>
+			<!-- Open Source Highlight Callout -->
+			<p class="text-base md:text-[17px] leading-[1.8] text-neutral-800 dark:text-neutral-300 font-serif">
+				<span class="hand-drawn-highlight">This site is completely <strong class="font-bold">open source</strong>. You can see the complete code on our <a href="https://github.com/DeepanshuK2002/donotstopwriting" target="_blank" rel="noopener noreferrer" class="font-semibold hover:opacity-85">github repo</a>.</span>
+			</p>
 
 			<hr class="border-t border-neutral-150 dark:border-neutral-900" />
 
 			<!-- The Creator Section -->
 			<div class="space-y-6">
 				<h2 class="text-xl md:text-2xl font-bold text-primary dark:text-white tracking-tight">
-					The Creator
+					The Team
 				</h2>
-				<div class="flex flex-col md:flex-row items-center md:items-start gap-8">
-					<!-- Polaroid Frame Image -->
-					<div class="relative w-48 bg-white dark:bg-[#1C1C1E] p-3 pb-10 border border-neutral-250/30 dark:border-neutral-800 shadow-[0_8px_24px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] flex-shrink-0 mx-auto md:mx-0 -rotate-3 transition-transform duration-300 hover:rotate-0 hover:scale-105 rounded-md">
-						<!-- Color Image (no grayscale filter) -->
-						<img 
-							src="/deepanshu.jpg" 
-							alt="Deepanshu Kashyap" 
-							class="w-full aspect-square object-cover border border-neutral-100 dark:border-neutral-900 rounded-sm"
-						/>
-						<!-- Polaroid Bottom Caption -->
-						<div class="absolute bottom-2.5 left-0 right-0 text-center font-serif italic text-[11px] tracking-wide text-neutral-450 dark:text-neutral-500 select-none">
-							Deepanshu Kashyap
+				<div class="flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-12 pt-4">
+					<!-- Interactive Card Deck Container -->
+					<div id="profile-deck" class="deck-container relative w-48 h-64 md:w-56 md:h-72 mx-auto md:mx-0 flex-shrink-0 select-none cursor-pointer">
+						<!-- Card 1: Deepanshu (Developer) -->
+						<div id="card-developer" class="profile-card absolute inset-0 bg-white dark:bg-[#1C1C1E] p-3 pb-12 border border-neutral-200/50 dark:border-neutral-800 shadow-[0_12px_28px_rgba(0,0,0,0.12)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.4)] rounded-xl transform" data-state="front">
+							<img 
+								src="/deepanshu.jpg" 
+								alt="Deepanshu Kashyap" 
+								class="w-full h-full object-cover rounded-lg border border-neutral-100 dark:border-neutral-900 pointer-events-none"
+							/>
+							<div class="absolute bottom-3 left-0 right-0 text-center font-serif italic text-xs tracking-wide text-neutral-500 dark:text-neutral-400">
+								Deepanshu Kashyap
+							</div>
+						</div>
+
+						<!-- Card 2: Divia (Co-developer & Marketing Head) -->
+						<div id="card-codeveloper" class="profile-card absolute inset-0 bg-white dark:bg-[#1C1C1E] p-3 pb-12 border border-neutral-200/50 dark:border-neutral-800 shadow-[0_12px_28px_rgba(0,0,0,0.12)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.4)] rounded-xl transform" data-state="back">
+							<img 
+								src="/divia.png" 
+								alt="Divia Kashyap" 
+								class="w-full h-full object-cover rounded-lg border border-neutral-100 dark:border-neutral-900 pointer-events-none"
+							/>
+							<div class="absolute bottom-3 left-0 right-0 text-center font-serif italic text-xs tracking-wide text-neutral-500 dark:text-neutral-400">
+								Divia Kashyap
+							</div>
 						</div>
 					</div>
 
-					<!-- Bio text -->
-					<div class="flex-1 space-y-4 text-base md:text-[17px] leading-[1.8] text-neutral-800 dark:text-neutral-300 text-center md:text-left font-serif">
-						<p>
-							My name is <strong>Deepanshu Kashyap</strong>, an aspiring developer and writer. I developed this tool because I got stuck in the slumber of perfectionism and was never able to complete my projects, looking to AI to help fix it.
-						</p>
-						<p>
-							I use this website to write whatever I want—simply putting my brain out on the page and fixing it later.
-						</p>
-						<p class="border-l-2 border-[#E52525] pl-4 italic font-medium text-neutral-900 dark:text-neutral-200">
-							This is the original website for this idea—other tools you see online today are copies of this project.
-						</p>
-						<div class="flex flex-wrap gap-3 pt-2 justify-center md:justify-start">
-							<!-- GitHub Link -->
-							<a 
-								href="https://github.com/DeepanshuK2002" 
-								target="_blank" 
-								rel="noopener noreferrer" 
-								class="inline-flex items-center gap-2 px-4 py-2 border border-neutral-200 dark:border-neutral-850 rounded-lg text-sm font-sans font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-900 text-primary dark:text-neutral-200 shadow-sm transition-all duration-200 no-underline cursor-pointer"
-							>
-								<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
-									<path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.27C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
-								</svg>
-								GitHub
-							</a>
-							<!-- X Link -->
-							<a 
-								href="https://x.com/Deepanshuk2002" 
-								target="_blank" 
-								rel="noopener noreferrer" 
-								class="inline-flex items-center gap-2 px-4 py-2 border border-neutral-200 dark:border-neutral-850 rounded-lg text-sm font-sans font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-900 text-primary dark:text-neutral-200 shadow-sm transition-all duration-200 no-underline cursor-pointer"
-							>
-								<svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
-									<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-								</svg>
-								Follow on X
-							</a>
+					<!-- Details Panel Container -->
+					<div class="flex-1 w-full bio-container">
+						<!-- Bio 1: Deepanshu (Developer) -->
+						<div id="bio-developer" class="bio-panel space-y-4 text-base md:text-[17px] leading-[1.8] text-neutral-800 dark:text-neutral-300 text-center md:text-left font-serif" data-state="active">
+							<div class="space-y-1">
+								<h3 class="text-lg md:text-xl font-bold text-primary dark:text-white">Deepanshu Kashyap</h3>
+								<p class="text-xs font-sans font-bold text-[#E52525] tracking-wider uppercase">Developer & Writer</p>
+							</div>
+							<p>
+								My name is <strong>Deepanshu Kashyap</strong>, an aspiring developer and writer. I developed this tool because I got stuck in the slumber of perfectionism and was never able to complete my projects, looking to AI to help fix it.
+							</p>
+							<p>
+								I use this website to write whatever I want—simply putting my brain out on the page and fixing it later.
+							</p>
+							<p class="border-l-2 border-[#E52525] pl-4 italic font-medium text-neutral-900 dark:text-neutral-200">
+								This is the original website for this idea—other tools you see online today are copies of this project.
+							</p>
+							<div class="flex flex-wrap gap-3 pt-2 justify-center md:justify-start">
+								<!-- GitHub Link -->
+								<a 
+									href="https://github.com/DeepanshuK2002" 
+									target="_blank" 
+									rel="noopener noreferrer" 
+									class="inline-flex items-center gap-2 px-4 py-2 border border-neutral-200 dark:border-neutral-850 rounded-lg text-sm font-sans font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-900 text-primary dark:text-neutral-200 shadow-sm transition-all duration-200 no-underline cursor-pointer"
+								>
+									<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+										<path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.27C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
+									</svg>
+									GitHub
+								</a>
+								<!-- X Link -->
+								<a 
+									href="https://x.com/Deepanshuk2002" 
+									target="_blank" 
+									rel="noopener noreferrer" 
+									class="inline-flex items-center gap-2 px-4 py-2 border border-neutral-200 dark:border-neutral-850 rounded-lg text-sm font-sans font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-900 text-primary dark:text-neutral-200 shadow-sm transition-all duration-200 no-underline cursor-pointer"
+								>
+									<svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+										<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+									</svg>
+									Follow on X
+								</a>
+							</div>
+						</div>
+
+						<!-- Bio 2: Divia (Co-developer) -->
+						<div id="bio-codeveloper" class="bio-panel space-y-4 text-base md:text-[17px] leading-[1.8] text-neutral-800 dark:text-neutral-300 text-center md:text-left font-serif" data-state="inactive">
+							<div class="space-y-1">
+								<h3 class="text-lg md:text-xl font-bold text-primary dark:text-white">Divia Kashyap</h3>
+								<p class="text-xs font-sans font-bold text-[#E52525] tracking-wider uppercase">Co-Developer & Marketing Head</p>
+							</div>
+							<p>
+								This is <strong>Divia Kashyap</strong>, the co-developer and sister of the developer, along with the key marketing head for the website.
+							</p>
+							<p class="border-l-2 border-[#E52525] pl-4 italic font-medium text-neutral-900 dark:text-neutral-200">
+								Our only motive is to provide you one functionality, but the functionality be the best.
+							</p>
 						</div>
 					</div>
 				</div>
 			</div>
+
+			<script>
+				// Selectors
+				const deck = document.getElementById('profile-deck');
+				const cardDev = document.getElementById('card-developer');
+				const cardCoDev = document.getElementById('card-codeveloper');
+				const bioDev = document.getElementById('bio-developer');
+				const bioCoDev = document.getElementById('bio-codeveloper');
+
+				let isDevActive = true;
+				let isAnimating = false;
+
+				function shuffle() {
+					if (isAnimating) return;
+					isAnimating = true;
+
+					const activeCard = isDevActive ? cardDev : cardCoDev;
+					const inactiveCard = isDevActive ? cardCoDev : cardDev;
+					const activeBio = isDevActive ? bioDev : bioCoDev;
+					const inactiveBio = isDevActive ? bioCoDev : bioDev;
+
+					// 1. Slide out active card
+					if (activeCard) {
+						activeCard.classList.add('shuffle-out');
+					}
+
+					// 2. Swapping states mid-way through slide-out
+					setTimeout(() => {
+						if (activeCard && inactiveCard && activeBio && inactiveBio) {
+							// Swap state attributes
+							activeCard.setAttribute('data-state', 'back');
+							inactiveCard.setAttribute('data-state', 'front');
+
+							activeBio.setAttribute('data-state', 'inactive');
+							inactiveBio.setAttribute('data-state', 'active');
+						}
+
+						// Toggle status flag
+						isDevActive = !isDevActive;
+
+						// 3. Slide back in from behind
+						setTimeout(() => {
+							if (activeCard) {
+								activeCard.classList.remove('shuffle-out');
+							}
+							// Settle timeout to match the 800ms total transition
+							setTimeout(() => {
+								isAnimating = false;
+							}, 320);
+						}, 100);
+					}, 380);
+				}
+
+				// Click triggers
+				if (deck) {
+					deck.addEventListener('click', shuffle);
+				}
+			</script>
 			<hr class="border-t border-neutral-150 dark:border-neutral-900" />
 
 			<!-- Original Icon Section -->
@@ -442,6 +538,123 @@ import ThemeToggle from '../components/ThemeToggle';
 		</footer>
 	</main>
 </Layout>
+
+<style>
+	.deck-container {
+		perspective: 1200px;
+	}
+	
+	.profile-card {
+		transform-style: preserve-3d;
+		backface-visibility: hidden;
+		transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+					opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+					box-shadow 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+		cursor: pointer;
+	}
+
+	/* Front state */
+	.profile-card[data-state="front"] {
+		z-index: 20;
+		transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+		opacity: 1;
+		box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.05);
+	}
+
+	/* Back state */
+	.profile-card[data-state="back"] {
+		z-index: 10;
+		transform: translate3d(20px, 14px, -40px) rotate(-4deg) scale(0.93);
+		opacity: 0.6;
+		box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
+	}
+
+	/* Deck container hover states for 3D parallax peeking */
+	.deck-container:hover .profile-card[data-state="front"] {
+		transform: translate3d(-6px, -4px, 15px) rotate(1.5deg) scale(1.02);
+		box-shadow: 0 28px 56px rgba(0, 0, 0, 0.16), 0 3px 10px rgba(0, 0, 0, 0.08);
+	}
+
+	.deck-container:hover .profile-card[data-state="back"] {
+		transform: translate3d(34px, 20px, -25px) rotate(-7deg) scale(0.95);
+		opacity: 0.85;
+		box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+	}
+
+	/* Shuffle Out Animation */
+	.profile-card.shuffle-out {
+		z-index: 30;
+		transform: translate3d(-130%, 15px, 80px) rotate(-18deg) scale(0.92) !important;
+		opacity: 0.85;
+		box-shadow: 0 30px 60px rgba(0, 0, 0, 0.18);
+	}
+
+	/* Bio transition styles */
+	.bio-container {
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-template-rows: 1fr;
+		width: 100%;
+	}
+
+	.bio-panel {
+		grid-area: 1 / 1 / 2 / 2;
+		transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+					filter 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+					transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+					visibility 0.6s;
+	}
+
+	.bio-panel[data-state="active"] {
+		opacity: 1;
+		filter: blur(0px);
+		transform: scale(1);
+		pointer-events: auto;
+		visibility: visible;
+	}
+
+	.bio-panel[data-state="inactive"] {
+		opacity: 0;
+		filter: blur(12px);
+		transform: scale(0.96);
+		pointer-events: none;
+		visibility: hidden;
+	}
+
+	/* Hand-drawn felt-tip highlighter effect */
+	.hand-drawn-highlight {
+		background: linear-gradient(104deg, rgba(230,76,102,0.03) 0%, rgba(230,76,102,0.18) 1.5%, rgba(230,76,102,0.14) 4%, rgba(230,76,102,0.17) 96%, rgba(230,76,102,0.06) 98.5%, rgba(230,76,102,0) 100%);
+		padding: 4px 12px 6px 10px;
+		margin: 0 -4px;
+		/* Irregular, wobbly border-radius for hand-drawn marker look */
+		border-radius: 250px 15px 225px 15px / 15px 225px 15px 255px;
+		box-decoration-break: clone;
+		-webkit-box-decoration-break: clone;
+		display: inline;
+		/* Lift and shift offset to simulate human marker dragging */
+		position: relative;
+		top: -1px;
+	}
+
+	:global(.dark) .hand-drawn-highlight {
+		background: linear-gradient(104deg, rgba(230,76,102,0.05) 0%, rgba(230,76,102,0.26) 1.5%, rgba(230,76,102,0.22) 4%, rgba(230,76,102,0.25) 96%, rgba(230,76,102,0.10) 98.5%, rgba(230,76,102,0) 100%);
+	}
+
+	.hand-drawn-highlight strong {
+		color: #e64c66;
+	}
+
+	.hand-drawn-highlight a {
+		color: #e64c66;
+		text-decoration: underline;
+		text-decoration-color: rgba(230, 76, 102, 0.4);
+		transition: text-decoration-color 0.2s ease;
+	}
+
+	.hand-drawn-highlight a:hover {
+		text-decoration-color: #e64c66;
+	}
+</style>
 
 <style is:global>
 	header, .subpage-container {
