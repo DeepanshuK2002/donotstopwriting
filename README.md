@@ -2,7 +2,7 @@
 
 > Defeat writer's block and enter the flow state instantly. If you stop typing, your progress is deleted.
 
-[**Live Demo & Instant Check**](https://donotstopwriting.pages.dev/) | [**Custom Domain**](https://donotstopwriting.com/)
+www.donotstopwriting.com [**Live Demo & Instant Check**](https://donotstopwriting.pages.dev/) | [**Custom Domain**](https://donotstopwriting.com/)
 
 ---
 
