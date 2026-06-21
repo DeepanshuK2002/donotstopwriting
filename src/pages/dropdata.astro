@@ -10,34 +10,32 @@ import ThemeToggle from '../components/ThemeToggle';
 	<div class="dropdata-page min-h-screen text-slate-100 font-sans flex flex-col justify-between">
 		
 		<!-- Top Floating Navigation Capsule (macOS Dock Style) -->
-		<div style="top: -1px; left: 50%; transform: translateX(-50%); z-index: 999;" class="fixed w-[calc(100%-2rem)] max-w-[740px] h-[64px] select-none px-4 md:px-0">
+		<div style="top: -1px; left: 50%; transform: translateX(-50%); z-index: 999;" class="fixed w-[calc(100%-2rem)] max-w-[580px] h-[52px] select-none px-4 md:px-0">
 			<nav 
 				style="background: rgba(0, 0, 0, 0.98); border: 1px solid rgba(255, 255, 255, 0.08); border-top: none; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.05); border-radius: 0 0 28px 28px;" 
 				class="w-full h-full flex items-center justify-between px-6"
 			>
 				<!-- Brand Logo + Name -->
-				<a href="/" class="flex items-center gap-2.5 hover:opacity-85 no-underline transition-opacity">
-					<img src="/dropdata-icon.png" alt="dropdata logo" class="w-9 h-9 object-contain" />
-					<span class="font-serif font-semibold text-white text-[19px] tracking-wide lowercase">dropdata</span>
+				<a href="/" class="flex items-center gap-2 hover:opacity-85 no-underline transition-opacity">
+					<img src="/dropdata-icon.png" alt="dropdata logo" class="w-7.5 h-7.5 object-contain" />
+					<span class="font-serif font-semibold text-white text-[17px] tracking-wide lowercase">dropdata</span>
 				</a>
 				
 				<!-- Nav Links -->
 				<div class="hidden sm:flex items-center gap-6">
 					<a href="/" class="text-[14.5px] font-semibold tracking-[0.02em] text-white/75 hover:text-white no-underline transition-colors duration-200">Home</a>
 					<a href="/tools" class="text-[14.5px] font-semibold tracking-[0.02em] text-white/75 hover:text-white no-underline transition-colors duration-200">Tools</a>
-					<a href="/about" class="text-[14.5px] font-semibold tracking-[0.02em] text-white/75 hover:text-white no-underline transition-colors duration-200">About</a>
-					<a href="/contact" class="text-[14.5px] font-semibold tracking-[0.02em] text-white/75 hover:text-white no-underline transition-colors duration-200">Contact</a>
 				</div>
 				
 				<!-- Action Button on Right + Theme Toggle -->
-				<div class="flex items-center gap-4">
+				<div class="flex items-center gap-3">
 					<div class="theme-toggle-wrapper flex items-center">
 						<ThemeToggle client:load />
 					</div>
 					<a 
 						href="/dropdata" 
-						style="background-color: #ffffff; color: #000000; font-weight: 600; padding: 12px 24px; border-radius: 9999px; transition: all 0.2s ease;"
-						class="inline-flex items-center justify-center text-[13px] shadow-sm no-underline hover:-translate-y-[1px]"
+						style="background-color: #ffffff; color: #000000; font-weight: 600; padding: 8px 18px; border-radius: 9999px; transition: all 0.2s ease;"
+						class="inline-flex items-center justify-center text-xs shadow-sm no-underline hover:-translate-y-[1px]"
 					>
 						Reset App
 					</a>
@@ -238,13 +236,31 @@ import ThemeToggle from '../components/ThemeToggle';
 		</main>
 
 		<!-- Footer -->
-		<footer class="w-full max-w-[850px] mx-auto py-8 px-4 border-t border-white/5 text-center space-y-2 select-none relative z-10">
-			<p class="text-[11px] text-slate-500">
-				&copy; 2026 donotstopwriting.com / dropdata secure peer transfers.
-			</p>
-			<p class="text-[9px] text-slate-600">
-				Powered by PeerJS WebRTC cloud infrastructure. Files are transferred exclusively locally between browsers and never cached online.
-			</p>
+		<footer class="w-full max-w-[740px] mx-auto py-12 px-6 border-t border-white/5 space-y-6 select-none relative z-10 text-center md:text-left">
+			<div class="flex flex-col md:flex-row items-center justify-between gap-6">
+				<!-- Logo Section -->
+				<a href="/" class="flex items-center gap-2 hover:opacity-85 no-underline transition-opacity">
+					<img src="/original-icon.png" alt="Do Not Stop Writing Logo" class="w-5 h-5 object-contain" />
+					<span class="font-serif text-white text-[14px] tracking-wide lowercase">donotstopwriting.com</span>
+				</a>
+				
+				<!-- Link Tabs -->
+				<div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs font-medium text-slate-400">
+					<a href="/" class="hover:text-white transition-colors no-underline">Home</a>
+					<a href="/tools" class="hover:text-white transition-colors no-underline">Tools</a>
+					<a href="/about" class="hover:text-white transition-colors no-underline">About</a>
+					<a href="/contact" class="hover:text-white transition-colors no-underline">Contact</a>
+					<a href="/terms" class="hover:text-white transition-colors no-underline">Terms of Service</a>
+					<a href="/privacy" class="hover:text-white transition-colors no-underline">Privacy Policy</a>
+				</div>
+			</div>
+			
+			<div class="flex flex-col md:flex-row items-center justify-between gap-4 pt-4 border-t border-white/5 text-[10px] text-slate-500">
+				<p>&copy; 2026 donotstopwriting.com / dropdata secure peer transfers.</p>
+				<p class="max-w-[420px] text-center md:text-right leading-relaxed text-slate-600">
+					Powered by PeerJS WebRTC cloud infrastructure. Files are transferred exclusively locally between browsers and never cached online.
+				</p>
+			</div>
 		</footer>
 
 	</div>
