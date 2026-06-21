@@ -105,18 +105,41 @@ import ThemeToggle from '../components/ThemeToggle';
 						<div id="panel-receive" class="space-y-5 hidden">
 							<div class="text-center space-y-1">
 								<h3 class="text-md font-bold text-slate-900 dark:text-white">Connect to Room</h3>
-								<p class="text-xs text-slate-600 dark:text-slate-400">Enter the 9-digit room code from the sender.</p>
+								<p class="text-xs text-slate-600 dark:text-slate-400">Enter the 9-digit room code or scan the sender's QR code.</p>
 							</div>
-							<div class="space-y-3">
+							<div class="space-y-3" id="receive-manual-container">
 								<input 
 									type="text" 
 									id="input-room-code" 
+									inputmode="numeric"
 									placeholder="000-000-000" 
 									maxlength="11" 
 									class="w-full py-3 px-4 rounded-xl bg-slate-100 dark:bg-black/40 border border-slate-350 dark:border-white/10 text-center text-md font-mono tracking-widest text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 focus:border-blue-500 focus:outline-none transition-colors duration-200 uppercase"
 								/>
-								<button id="btn-connect-room" class="w-full py-3 px-4 bg-blue-500 text-white hover:bg-blue-600 rounded-xl text-xs font-bold font-sans tracking-wide shadow-md transition-all duration-200 cursor-pointer">
-									Connect to Sender
+								<div class="flex gap-2 items-center">
+									<button id="btn-connect-room" class="flex-1 py-3 px-4 bg-blue-500 text-white hover:bg-blue-600 rounded-xl text-xs font-bold font-sans tracking-wide shadow-md transition-all duration-200 cursor-pointer border-0">
+										Connect to Sender
+									</button>
+									<button id="btn-scan-qr" class="p-2.5 bg-transparent text-slate-550 dark:text-slate-400 hover:text-blue-500 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-all duration-200 cursor-pointer flex items-center justify-center border border-slate-300 dark:border-white/10" title="Scan QR Code">
+										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+											<path d="M4 8V6a2 2 0 0 1 2-2h2"/>
+											<path d="M16 4h2a2 2 0 0 1 2 2v2"/>
+											<path d="M4 16v2a2 2 0 0 0 2 2h2"/>
+											<path d="M16 20h2a2 2 0 0 0 2-2v-2"/>
+											<line x1="7" y1="12" x2="17" y2="12" stroke="currentColor"/>
+										</svg>
+									</button>
+								</div>
+							</div>
+
+							<!-- QR Scanner Container (Hidden initially) -->
+							<div id="receive-scanner-container" class="space-y-3 hidden">
+								<div class="relative overflow-hidden rounded-2xl bg-black border border-slate-350 dark:border-white/10 w-full aspect-square max-w-[280px] mx-auto">
+									<div id="qr-reader" class="w-full h-full"></div>
+									<div class="absolute inset-0 border-[3px] border-dashed border-blue-500 pointer-events-none opacity-40 animate-pulse m-6 rounded-xl"></div>
+								</div>
+								<button id="btn-cancel-scan" class="w-full py-2 px-4 bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 rounded-xl text-xs font-bold font-sans tracking-wide transition-all duration-200 cursor-pointer border border-slate-200 dark:border-white/5">
+									Cancel Scanner
 								</button>
 							</div>
 						</div>
@@ -350,6 +373,7 @@ import ThemeToggle from '../components/ThemeToggle';
 
 <script is:inline src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
 <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+<script is:inline src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
 <script is:inline>
 	(function() {
@@ -421,6 +445,12 @@ import ThemeToggle from '../components/ThemeToggle';
 		const inputChatMsg = document.getElementById('input-chat-msg');
 		const btnSendChat = document.getElementById('btn-send-chat');
 		const chatBadge = document.getElementById('chat-badge');
+		
+		// QR Code Scanner UI Selectors
+		const btnScanQr = document.getElementById('btn-scan-qr');
+		const btnCancelScan = document.getElementById('btn-cancel-scan');
+		const receiveManualContainer = document.getElementById('receive-manual-container');
+		const receiveScannerContainer = document.getElementById('receive-scanner-container');
 
 		// --- State Variables ---
 		let peer = null;
@@ -600,6 +630,74 @@ import ThemeToggle from '../components/ThemeToggle';
 			}
 			e.target.value = formatted;
 		});
+
+		// --- QR Code Scanner Logic ---
+		let html5QrCode = null;
+
+		btnScanQr.addEventListener('click', () => {
+			startQrScanner();
+		});
+
+		btnCancelScan.addEventListener('click', () => {
+			stopQrScanner();
+		});
+
+		function startQrScanner() {
+			receiveManualContainer.classList.add('hidden');
+			receiveScannerContainer.classList.remove('hidden');
+			
+			html5QrCode = new Html5Qrcode("qr-reader");
+			
+			const qrCodeSuccessCallback = (decodedText) => {
+				console.log("Scanned text successfully:", decodedText);
+				
+				let room = '';
+				try {
+					const url = new URL(decodedText);
+					room = url.searchParams.get('room') || '';
+				} catch (e) {
+					// Check if raw 9-digit code
+					if (/^\d{3}-\d{3}-\d{3}$/.test(decodedText)) {
+						room = decodedText;
+					}
+				}
+
+				if (room) {
+					stopQrScanner();
+					inputRoomCode.value = room;
+					initializeReceiver(room);
+				}
+			};
+
+			const config = { fps: 15, qrbox: { width: 220, height: 220 } };
+
+			html5QrCode.start(
+				{ facingMode: "environment" },
+				config,
+				qrCodeSuccessCallback
+			).catch((err) => {
+				console.error("Failed to start QR scanner:", err);
+				alert("Could not access camera. Please allow camera permissions or enter the room code manually.");
+				stopQrScanner();
+			});
+		}
+
+		function stopQrScanner() {
+			if (html5QrCode) {
+				if (html5QrCode.isScanning) {
+					html5QrCode.stop().then(() => {
+						html5QrCode.clear();
+						html5QrCode = null;
+					}).catch(err => {
+						console.error("Failed to stop QR scanner:", err);
+					});
+				} else {
+					html5QrCode = null;
+				}
+			}
+			receiveScannerContainer.classList.add('hidden');
+			receiveManualContainer.classList.remove('hidden');
+		}
 
 		// --- Copy Code to Clipboard ---
 		btnCopyCode.addEventListener('click', () => {
@@ -1011,6 +1109,9 @@ import ThemeToggle from '../components/ThemeToggle';
 		});
 
 		function initializeReceiver(targetCode) {
+			// Stop QR scanner if active
+			stopQrScanner();
+
 			// Show receiver active screen
 			tabsContainer.classList.add('hidden');
 			panelReceive.classList.add('hidden');
