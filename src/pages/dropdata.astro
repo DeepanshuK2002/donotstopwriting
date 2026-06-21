@@ -1,0 +1,697 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout 
+	title="dropdata - Secure Serverless P2P File Sharing"
+	description="Send files directly between browser tabs using secure end-to-peer WebRTC connections. No size limits, no server uploads, complete local privacy."
+>
+	<div class="dropdata-page min-h-screen text-slate-100 font-sans flex flex-col justify-between">
+		
+		<!-- Top Floating Navigation Capsule -->
+		<div class="w-full max-w-[850px] mx-auto pt-6 px-4 z-50 relative select-none">
+			<nav class="flex items-center justify-between bg-black/70 dark:bg-black/80 backdrop-blur-xl border border-white/10 rounded-full py-2.5 px-5 md:px-7 shadow-[0_12px_36px_rgba(0,0,0,0.6)]">
+				<!-- Brand Logo + Name -->
+				<a href="/" class="flex items-center gap-2 hover:opacity-85 no-underline transition-opacity">
+					<img src="/dropdata-icon.png" alt="dropdata logo" class="w-6.5 h-6.5 object-contain" />
+					<span class="font-serif lowercase text-white text-[18px] tracking-wide">dropdata</span>
+				</a>
+				
+				<!-- Nav Links -->
+				<div class="hidden sm:flex items-center gap-7">
+					<a href="/" class="text-xs font-semibold tracking-wide uppercase text-neutral-400 hover:text-white no-underline transition-colors duration-200">Home</a>
+					<a href="/tools" class="text-xs font-semibold tracking-wide uppercase text-neutral-400 hover:text-white no-underline transition-colors duration-200">Tools</a>
+					<a href="/about" class="text-xs font-semibold tracking-wide uppercase text-neutral-400 hover:text-white no-underline transition-colors duration-200">About</a>
+					<a href="/contact" class="text-xs font-semibold tracking-wide uppercase text-neutral-400 hover:text-white no-underline transition-colors duration-200">Contact</a>
+				</div>
+				
+				<!-- Action Button on Right -->
+				<div class="flex items-center">
+					<a href="/dropdata" class="inline-flex items-center bg-white text-black hover:bg-neutral-100 rounded-full px-4.5 py-1.5 text-xs font-bold shadow-sm transition-all duration-200 no-underline">
+						Reset App
+					</a>
+				</div>
+			</nav>
+		</div>
+
+		<!-- Main Hero & Interface -->
+		<main class="flex-1 flex flex-col items-center justify-center px-4 py-12 md:py-16 relative z-10">
+			<div class="w-full max-w-[640px] mx-auto text-center space-y-8">
+				
+				<!-- Title Badge -->
+				<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)] animate-fade-in select-none">
+					<span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
+					<span class="text-[10px] uppercase font-bold tracking-wider text-blue-400">P2P Encrypted File Sharing</span>
+				</div>
+
+				<!-- Main Headline -->
+				<div class="space-y-3 animate-fade-in">
+					<h1 class="text-4xl md:text-[54px] font-extrabold tracking-tight text-white leading-[1.1] font-sans">
+						Drop once.<br />
+						<span class="italic font-serif font-light text-blue-400">Receive instantly.</span>
+					</h1>
+					<p class="text-slate-400 text-sm md:text-base max-w-[480px] mx-auto leading-relaxed">
+						dropdata transfers files directly between browser tabs using WebRTC. No file size limits, no server storage, and complete peer-to-peer security.
+					</p>
+				</div>
+
+				<!-- Interactive Glassmorphic Card -->
+				<div class="app-card bg-slate-950/40 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 md:p-8 shadow-[0_24px_60px_-15px_rgba(0,0,0,0.7)] text-center max-w-[450px] w-full mx-auto relative overflow-hidden transition-all duration-300">
+					
+					<!-- Card Header Tab Switcher (State 1: Selection) -->
+					<div id="tabs-container" class="flex p-1 bg-black/40 rounded-full border border-white/5 mb-6 select-none">
+						<button id="tab-send" class="flex-1 text-center py-2 text-xs font-bold rounded-full transition-all duration-200 text-white bg-blue-500/20 border border-blue-500/20">
+							Send Files
+						</button>
+						<button id="tab-receive" class="flex-1 text-center py-2 text-xs font-bold rounded-full transition-all duration-200 text-slate-400 hover:text-white">
+							Receive Files
+						</button>
+					</div>
+
+					<!-- Content Panels -->
+					<div class="relative min-h-[160px] flex flex-col justify-center">
+						
+						<!-- Panel A: Send Start -->
+						<div id="panel-send" class="space-y-5">
+							<div class="text-center space-y-1">
+								<h3 class="text-md font-bold text-white">Create a Transfer Room</h3>
+								<p class="text-xs text-slate-400">Generates a unique 9-digit code for the receiver to connect.</p>
+							</div>
+							<button id="btn-create-room" class="w-full py-3 px-4 bg-white text-black hover:bg-neutral-100 rounded-xl text-xs font-bold tracking-wide shadow-md transition-all duration-200 cursor-pointer">
+								Generate Room Code
+							</button>
+						</div>
+
+						<!-- Panel B: Receive Start (Hidden initially) -->
+						<div id="panel-receive" class="space-y-5 hidden">
+							<div class="text-center space-y-1">
+								<h3 class="text-md font-bold text-white">Connect to Room</h3>
+								<p class="text-xs text-slate-400">Enter the 9-digit room code from the sender.</p>
+							</div>
+							<div class="space-y-3">
+								<input 
+									type="text" 
+									id="input-room-code" 
+									placeholder="000-000-000" 
+									maxlength="11" 
+									class="w-full py-3 px-4 rounded-xl bg-black/40 border border-white/10 text-center text-md font-mono tracking-widest text-white placeholder-slate-600 focus:border-blue-500 focus:outline-none transition-colors duration-200 uppercase"
+								/>
+								<button id="btn-connect-room" class="w-full py-3 px-4 bg-blue-500 text-white hover:bg-blue-600 rounded-xl text-xs font-bold tracking-wide shadow-md transition-all duration-200 cursor-pointer">
+									Connect to Sender
+								</button>
+							</div>
+						</div>
+
+						<!-- Panel C: Sender Waiting Room (Hidden initially) -->
+						<div id="panel-sender-waiting" class="space-y-6 hidden">
+							<div class="space-y-2">
+								<span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Share This Room Code</span>
+								<div class="flex items-center justify-center gap-3">
+									<span id="display-room-code" class="text-2xl md:text-3xl font-mono font-bold tracking-widest text-white">--- --- ---</span>
+									<button id="btn-copy-code" class="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-slate-300 hover:text-white transition-colors duration-200 border border-white/5" title="Copy code">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+											<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+											<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+										</svg>
+									</button>
+								</div>
+							</div>
+							<div class="flex flex-col items-center justify-center gap-3 py-2">
+								<div class="w-5 h-5 rounded-full border-2 border-blue-500/20 border-t-blue-500 animate-spin"></div>
+								<p class="text-xs text-slate-400">Waiting for receiver to connect...</p>
+							</div>
+						</div>
+
+						<!-- Panel D: Connected (Active P2P Fileshare - Sender / Dropzone) (Hidden initially) -->
+						<div id="panel-sender-active" class="space-y-5 hidden">
+							<div class="flex items-center justify-between border-b border-white/5 pb-3">
+								<div class="flex items-center gap-2">
+									<span class="w-2 h-2 rounded-full bg-blue-500"></span>
+									<span class="text-xs font-bold text-slate-300">Connected to Receiver</span>
+								</div>
+							</div>
+							
+							<!-- Drag and Drop Dropzone -->
+							<div id="dropzone" class="border-2 border-dashed border-white/15 hover:border-blue-500/50 hover:bg-blue-500/5 rounded-2xl p-6 transition-all duration-200 flex flex-col items-center justify-center gap-3 cursor-pointer">
+								<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="text-slate-400 group-hover:text-blue-400" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+									<polyline points="17 8 12 3 7 8"/>
+									<line x1="12" y1="3" x2="12" y2="15"/>
+								</svg>
+								<div class="space-y-1">
+									<p class="text-xs font-bold text-white">Drag & drop files here</p>
+									<p class="text-[10px] text-slate-400">Or click to browse your local device</p>
+								</div>
+								<input type="file" id="file-input" class="hidden" />
+							</div>
+
+							<!-- Transfer Progress Block (Hidden initially) -->
+							<div id="sender-progress-block" class="space-y-3 bg-black/40 border border-white/5 p-4 rounded-xl text-left hidden">
+								<div class="flex justify-between items-start gap-3">
+									<div class="truncate flex-1">
+										<p id="sender-file-name" class="text-xs font-bold text-white truncate">file.txt</p>
+										<p id="sender-file-size" class="text-[10px] text-slate-400">0 KB</p>
+									</div>
+									<span id="sender-percentage" class="text-xs font-mono font-bold text-blue-400">0%</span>
+								</div>
+								<div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+									<div id="sender-progress-bar" class="bg-blue-500 h-full w-[0%] transition-all duration-150"></div>
+								</div>
+								<p id="sender-status-msg" class="text-[10px] text-blue-400 italic">Sending chunks...</p>
+							</div>
+						</div>
+
+						<!-- Panel E: Receiver Active (Hidden initially) -->
+						<div id="panel-receiver-active" class="space-y-5 hidden">
+							<div class="flex items-center justify-between border-b border-white/5 pb-3">
+								<div class="flex items-center gap-2">
+									<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+									<span class="text-xs font-bold text-slate-300">Connected to Sender</span>
+								</div>
+							</div>
+							
+							<!-- Empty Waiting State -->
+							<div id="receiver-idle-state" class="flex flex-col items-center justify-center py-6 gap-3">
+								<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-slate-500 animate-pulse" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+									<polyline points="12 6 12 12 16 14"/>
+								</svg>
+								<p class="text-xs text-slate-400">Waiting for sender to select files...</p>
+							</div>
+
+							<!-- Transfer Progress Block (Hidden initially) -->
+							<div id="receiver-progress-block" class="space-y-3 bg-black/40 border border-white/5 p-4 rounded-xl text-left hidden">
+								<div class="flex justify-between items-start gap-3">
+									<div class="truncate flex-1">
+										<p id="receiver-file-name" class="text-xs font-bold text-white truncate">file.txt</p>
+										<p id="receiver-file-size" class="text-[10px] text-slate-400">0 KB</p>
+									</div>
+									<span id="receiver-percentage" class="text-xs font-mono font-bold text-emerald-450">0%</span>
+								</div>
+								<div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+									<div id="receiver-progress-bar" class="bg-emerald-500 h-full w-[0%] transition-all duration-150"></div>
+								</div>
+								<p id="receiver-status-msg" class="text-[10px] text-emerald-450 italic">Receiving file data...</p>
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+				<!-- Feature Badges -->
+				<div class="grid grid-cols-3 gap-4 pt-4 max-w-[480px] mx-auto text-center animate-fade-in select-none">
+					<div class="space-y-1">
+						<p class="text-white font-bold text-[14px]">100% Private</p>
+						<p class="text-slate-500 text-[10px]">No middleman servers</p>
+					</div>
+					<div class="space-y-1 border-x border-white/5">
+						<p class="text-white font-bold text-[14px]">Fast WebRTC</p>
+						<p class="text-slate-500 text-[10px]">Direct tab connections</p>
+					</div>
+					<div class="space-y-1">
+						<p class="text-white font-bold text-[14px]">No Size Limits</p>
+						<p class="text-slate-500 text-[10px]">Transfer any file type</p>
+					</div>
+				</div>
+
+			</div>
+		</main>
+
+		<!-- Footer -->
+		<footer class="w-full max-w-[850px] mx-auto py-8 px-4 border-t border-white/5 text-center space-y-2 select-none relative z-10">
+			<p class="text-[11px] text-slate-500">
+				&copy; 2026 donotstopwriting.com / dropdata secure peer transfers.
+			</p>
+			<p class="text-[9px] text-slate-600">
+				Powered by PeerJS WebRTC cloud infrastructure. Files are transferred exclusively locally between browsers and never cached online.
+			</p>
+		</footer>
+
+	</div>
+</Layout>
+
+<script is:inline src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+
+<script is:inline>
+	(function() {
+		// --- UI Selectors ---
+		const tabSend = document.getElementById('tab-send');
+		const tabReceive = document.getElementById('tab-receive');
+		const tabsContainer = document.getElementById('tabs-container');
+		
+		const panelSend = document.getElementById('panel-send');
+		const panelReceive = document.getElementById('panel-receive');
+		const panelSenderWaiting = document.getElementById('panel-sender-waiting');
+		const panelSenderActive = document.getElementById('panel-sender-active');
+		const panelReceiverActive = document.getElementById('panel-receiver-active');
+		
+		const btnCreateRoom = document.getElementById('btn-create-room');
+		const btnConnectRoom = document.getElementById('btn-connect-room');
+		const btnCopyCode = document.getElementById('btn-copy-code');
+		
+		const displayRoomCode = document.getElementById('display-room-code');
+		const inputRoomCode = document.getElementById('input-room-code');
+		
+		const dropzone = document.getElementById('dropzone');
+		const fileInput = document.getElementById('file-input');
+		
+		// Sender progress
+		const senderProgressBlock = document.getElementById('sender-progress-block');
+		const senderFileName = document.getElementById('sender-file-name');
+		const senderFileSize = document.getElementById('sender-file-size');
+		const senderPercentage = document.getElementById('sender-percentage');
+		const senderProgressBar = document.getElementById('sender-progress-bar');
+		const senderStatusMsg = document.getElementById('sender-status-msg');
+		
+		// Receiver progress
+		const receiverIdleState = document.getElementById('receiver-idle-state');
+		const receiverProgressBlock = document.getElementById('receiver-progress-block');
+		const receiverFileName = document.getElementById('receiver-file-name');
+		const receiverFileSize = document.getElementById('receiver-file-size');
+		const receiverPercentage = document.getElementById('receiver-percentage');
+		const receiverProgressBar = document.getElementById('receiver-progress-bar');
+		const receiverStatusMsg = document.getElementById('receiver-status-msg');
+
+		// --- State Variables ---
+		let peer = null;
+		let connection = null;
+		let roomCode = '';
+		let activeFile = null;
+		let fileBuffer = null;
+		let receivedChunks = [];
+		let receivedSize = 0;
+		let fileMetadata = null;
+
+		// --- Tab Switch Logic ---
+		tabSend.addEventListener('click', () => {
+			switchTab('send');
+		});
+
+		tabReceive.addEventListener('click', () => {
+			switchTab('receive');
+		});
+
+		function switchTab(mode) {
+			if (mode === 'send') {
+				tabSend.classList.add('text-white', 'bg-blue-500/20', 'border', 'border-blue-500/20');
+				tabSend.classList.remove('text-slate-400');
+				tabReceive.classList.remove('text-white', 'bg-blue-500/20', 'border', 'border-blue-500/20');
+				tabReceive.classList.add('text-slate-400');
+				
+				panelSend.classList.remove('hidden');
+				panelReceive.classList.add('hidden');
+			} else {
+				tabReceive.classList.add('text-white', 'bg-blue-500/20', 'border', 'border-blue-500/20');
+				tabReceive.classList.remove('text-slate-400');
+				tabSend.classList.remove('text-white', 'bg-blue-500/20', 'border', 'border-blue-500/20');
+				tabSend.classList.add('text-slate-400');
+				
+				panelReceive.classList.remove('hidden');
+				panelSend.classList.add('hidden');
+			}
+		}
+
+		// --- Helper: Format File Sizes ---
+		function formatBytes(bytes) {
+			if (bytes === 0) return '0 Bytes';
+			const k = 1024;
+			const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+			const i = Math.floor(Math.log(bytes) / Math.log(k));
+			return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+		}
+
+		// --- Helper: Generate Room ID ---
+		function generateRoomCode() {
+			const part1 = Math.floor(100 + Math.random() * 900);
+			const part2 = Math.floor(100 + Math.random() * 900);
+			const part3 = Math.floor(100 + Math.random() * 900);
+			return `${part1}-${part2}-${part3}`;
+		}
+
+		// --- Helper: Format Room Code Input ---
+		inputRoomCode.addEventListener('input', (e) => {
+			let val = e.target.value.replace(/\D/g, ''); // Numbers only
+			if (val.length > 9) val = val.substring(0, 9);
+			
+			let formatted = '';
+			if (val.length > 6) {
+				formatted = `${val.substring(0, 3)}-${val.substring(3, 6)}-${val.substring(6)}`;
+			} else if (val.length > 3) {
+				formatted = `${val.substring(0, 3)}-${val.substring(3)}`;
+			} else {
+				formatted = val;
+			}
+			e.target.value = formatted;
+		});
+
+		// --- Copy Code to Clipboard ---
+		btnCopyCode.addEventListener('click', () => {
+			if (roomCode) {
+				navigator.clipboard.writeText(roomCode).then(() => {
+					btnCopyCode.innerHTML = `
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+							<polyline points="20 6 9 17 4 12"/>
+						</svg>
+					`;
+					setTimeout(() => {
+						btnCopyCode.innerHTML = `
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+								<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+							</svg>
+						`;
+					}, 2000);
+				});
+			}
+		});
+
+		// --- SENDER STATE ACTIONS ---
+		btnCreateRoom.addEventListener('click', () => {
+			initializeSender();
+		});
+
+		function initializeSender() {
+			roomCode = generateRoomCode();
+			
+			// Show waiting panel
+			tabsContainer.classList.add('hidden');
+			panelSend.classList.add('hidden');
+			panelSenderWaiting.classList.remove('hidden');
+			displayRoomCode.innerText = roomCode;
+
+			// Initialize PeerJS
+			peer = new Peer(roomCode);
+
+			peer.on('open', (id) => {
+				console.log('Sender peer registry open on ID:', id);
+			});
+
+			peer.on('connection', (conn) => {
+				console.log('Receiver connected to room!');
+				connection = conn;
+				setupSenderCommunication();
+			});
+
+			peer.on('error', (err) => {
+				console.error('PeerJS error:', err);
+				if (err.type === 'unavailable-id') {
+					console.log('Room ID taken, retrying generation...');
+					peer.destroy();
+					initializeSender();
+				} else {
+					alert('Connection error: ' + err.message);
+					window.location.reload();
+				}
+			});
+		}
+
+		function setupSenderCommunication() {
+			// Update UI to active file transmission panel
+			panelSenderWaiting.classList.add('hidden');
+			panelSenderActive.classList.remove('hidden');
+
+			connection.on('open', () => {
+				console.log('P2P connection open between Sender & Receiver');
+			});
+
+			connection.on('data', (data) => {
+				if (data.type === 'request-chunk') {
+					sendNextChunk();
+				}
+			});
+
+			connection.on('close', () => {
+				alert('Receiver connection closed.');
+				window.location.reload();
+			});
+		}
+
+		// --- DRAG AND DROP HANDLERS (SENDER) ---
+		dropzone.addEventListener('click', () => fileInput.click());
+
+		dropzone.addEventListener('dragover', (e) => {
+			e.preventDefault();
+			dropzone.classList.add('border-blue-500', 'bg-blue-500/10');
+		});
+
+		dropzone.addEventListener('dragleave', () => {
+			dropzone.classList.remove('border-blue-500', 'bg-blue-500/10');
+		});
+
+		dropzone.addEventListener('drop', (e) => {
+			e.preventDefault();
+			dropzone.classList.remove('border-blue-500', 'bg-blue-500/10');
+			if (e.dataTransfer.files.length > 0) {
+				handleFileSelection(e.dataTransfer.files[0]);
+			}
+		});
+
+		fileInput.addEventListener('change', (e) => {
+			if (e.target.files.length > 0) {
+				handleFileSelection(e.target.files[0]);
+			}
+		});
+
+		function handleFileSelection(file) {
+			activeFile = file;
+			
+			// Show progress panel inside card
+			dropzone.classList.add('hidden');
+			senderProgressBlock.classList.remove('hidden');
+			
+			senderFileName.innerText = file.name;
+			senderFileSize.innerText = formatBytes(file.size);
+			senderPercentage.innerText = '0%';
+			senderProgressBar.style.width = '0%';
+			senderStatusMsg.innerText = 'Reading file...';
+
+			// Read file arraybuffer
+			const reader = new FileReader();
+			reader.onload = function(e) {
+				fileBuffer = e.target.result;
+				startFileSharing();
+			};
+			reader.readAsArrayBuffer(file);
+		}
+
+		let offset = 0;
+		const CHUNK_SIZE = 16384; // 16KB standard WebRTC chunk
+
+		function startFileSharing() {
+			if (!connection) return;
+			offset = 0;
+			
+			senderStatusMsg.innerText = 'Connecting transfer protocol...';
+			
+			// Send metadata
+			connection.send({
+				type: 'file-meta',
+				filename: activeFile.name,
+				size: activeFile.size,
+				chunkSize: CHUNK_SIZE
+			});
+		}
+
+		function sendNextChunk() {
+			if (!connection || !fileBuffer) return;
+			
+			senderStatusMsg.innerText = 'Streaming data packages...';
+
+			if (offset < fileBuffer.byteLength) {
+				const chunk = fileBuffer.slice(offset, offset + CHUNK_SIZE);
+				offset += CHUNK_SIZE;
+				
+				connection.send({
+					type: 'file-chunk',
+					chunk: chunk
+				});
+
+				// Update progress bar
+				const progress = Math.min(100, Math.trunc((offset / fileBuffer.byteLength) * 100));
+				senderPercentage.innerText = `${progress}%`;
+				senderProgressBar.style.width = `${progress}%`;
+			} else {
+				// Send complete flag
+				connection.send({
+					type: 'file-done'
+				});
+				
+				senderPercentage.innerText = '100%';
+				senderProgressBar.style.width = '100%';
+				senderStatusMsg.innerHTML = '<span class="text-emerald-450 font-bold">✓ File transferred successfully!</span>';
+				
+				// Reset files for next round after 3 seconds
+				setTimeout(() => {
+					dropzone.classList.remove('hidden');
+					senderProgressBlock.classList.add('hidden');
+					fileInput.value = '';
+					activeFile = null;
+					fileBuffer = null;
+				}, 4000);
+			}
+		}
+
+		// --- RECEIVER STATE ACTIONS ---
+		btnConnectRoom.addEventListener('click', () => {
+			const code = inputRoomCode.value.trim();
+			if (code.length === 11) { // 000-000-000 is 11 chars with dashes
+				initializeReceiver(code);
+			} else {
+				alert('Please enter a valid 9-digit Room Code.');
+			}
+		});
+
+		function initializeReceiver(targetCode) {
+			// Show receiver active screen
+			tabsContainer.classList.add('hidden');
+			panelReceive.classList.add('hidden');
+			panelReceiverActive.classList.remove('hidden');
+
+			// Connect
+			peer = new Peer();
+
+			peer.on('open', (id) => {
+				console.log('Receiver peer active, connecting to sender:', targetCode);
+				connection = peer.connect(targetCode);
+				setupReceiverCommunication();
+			});
+
+			peer.on('error', (err) => {
+				console.error('PeerJS Connection Error:', err);
+				alert('Could not connect to Room. Check code and verify the sender window is open.');
+				window.location.reload();
+			});
+		}
+
+		function setupReceiverCommunication() {
+			connection.on('open', () => {
+				console.log('P2P connection established on Receiver end!');
+			});
+
+			connection.on('data', (data) => {
+				if (data.type === 'file-meta') {
+					// Metadata received
+					fileMetadata = data;
+					receivedChunks = [];
+					receivedSize = 0;
+					
+					// Update UI
+					receiverIdleState.classList.add('hidden');
+					receiverProgressBlock.classList.remove('hidden');
+					
+					receiverFileName.innerText = fileMetadata.filename;
+					receiverFileSize.innerText = formatBytes(fileMetadata.size);
+					receiverPercentage.innerText = '0%';
+					receiverProgressBar.style.width = '0%';
+					receiverStatusMsg.innerText = 'Ready to stream. Initiating transfer...';
+					
+					// Request the first chunk
+					connection.send({ type: 'request-chunk' });
+				} 
+				else if (data.type === 'file-chunk') {
+					// Chunk received
+					receivedChunks.push(data.chunk);
+					receivedSize += data.chunk.byteLength;
+
+					// Update UI progress
+					const progress = Math.min(100, Math.trunc((receivedSize / fileMetadata.size) * 100));
+					receiverPercentage.innerText = `${progress}%`;
+					receiverProgressBar.style.width = `${progress}%`;
+					receiverStatusMsg.innerText = `Receiving package (${formatBytes(receivedSize)} / ${formatBytes(fileMetadata.size)})...`;
+
+					// Request next chunk
+					connection.send({ type: 'request-chunk' });
+				} 
+				else if (data.type === 'file-done') {
+					// Transmission complete, assemble Blob and download
+					receiverStatusMsg.innerText = 'Reassembling file packages...';
+					
+					const blob = new Blob(receivedChunks);
+					const downloadUrl = URL.createObjectURL(blob);
+					
+					// Auto download
+					const a = document.createElement('a');
+					a.href = downloadUrl;
+					a.download = fileMetadata.filename;
+					document.body.appendChild(a);
+					a.click();
+					document.body.removeChild(a);
+					URL.revokeObjectURL(downloadUrl);
+					
+					receiverPercentage.innerText = '100%';
+					receiverProgressBar.style.width = '100%';
+					receiverStatusMsg.innerHTML = '<span class="text-emerald-500 font-bold">✓ Download Completed! check your downloads folder.</span>';
+
+					// Return back to idle after a few seconds
+					setTimeout(() => {
+						receiverIdleState.classList.remove('hidden');
+						receiverProgressBlock.classList.add('hidden');
+						receivedChunks = [];
+						receivedSize = 0;
+						fileMetadata = null;
+					}, 5000);
+				}
+			});
+
+			connection.on('close', () => {
+				alert('Sender disconnected or closed connection.');
+				window.location.reload();
+			});
+		}
+
+	})();
+</script>
+
+<style>
+	/* Background with glowing top radial blue gradient matching screenshot */
+	.dropdata-page {
+		background: radial-gradient(130% 80% at 50% 0%, #1e3a8a 0%, #0f172a 40%, #030712 100%);
+		position: relative;
+		overflow-x: hidden;
+	}
+
+	.dropdata-page::before {
+		content: '';
+		position: absolute;
+		top: 0%;
+		left: 50%;
+		transform: translate(-50%, -10%);
+		width: 100%;
+		max-width: 1000px;
+		height: 400px;
+		background: radial-gradient(circle, rgba(59,130,246,0.3) 0%, rgba(14,165,233,0.12) 50%, rgba(3,7,18,0) 80%);
+		filter: blur(60px);
+		pointer-events: none;
+		z-index: 1;
+	}
+
+	/* Beautiful custom inputs and cards */
+	.app-card {
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+	}
+
+	/* Fade-in transitions */
+	.animate-fade-in {
+		animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+			transform: translateY(12px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.text-emerald-450 {
+		color: #34d399;
+	}
+
+	.bg-emerald-500 {
+		background-color: #10b981;
+	}
+</style>
