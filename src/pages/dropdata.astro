@@ -554,10 +554,18 @@ import ThemeToggle from '../components/ThemeToggle';
 
 		function updatePresenceUI() {
 			const activeCount = Object.keys(connections).length;
+			const totalPeople = activeCount + 1; // connections + myself
+
 			if (activeCount > 0) {
 				connectionStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-500';
 			} else {
 				connectionStatusDot.className = 'w-2 h-2 rounded-full bg-slate-400';
+			}
+
+			if (totalPeople > 2) {
+				connectionStatusText.innerText = `Connected as ${myUsername} (${totalPeople} people)`;
+			} else {
+				connectionStatusText.innerText = `Connected as ${myUsername}`;
 			}
 		}
 
@@ -1346,7 +1354,8 @@ import ThemeToggle from '../components/ThemeToggle';
 		if (btnLeaveRoom) {
 			btnLeaveRoom.addEventListener('click', () => {
 				broadcast({ type: 'peer-left' });
-				handlePeerDisconnect();
+				// Clean reset back to start screen without "Connection Lost" error
+				window.location.href = window.location.pathname;
 			});
 		}
 
