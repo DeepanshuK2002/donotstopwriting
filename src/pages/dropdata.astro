@@ -114,7 +114,7 @@ import ThemeToggle from '../components/ThemeToggle';
 						</div>
 
 						<!-- Panel C: Sender Waiting Room (Hidden initially) -->
-						<div id="panel-sender-waiting" class="space-y-6 hidden">
+						<div id="panel-sender-waiting" class="space-y-5 hidden">
 							<div class="space-y-2">
 								<span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Share This Room Code</span>
 								<div class="flex items-center justify-center gap-3">
@@ -127,9 +127,18 @@ import ThemeToggle from '../components/ThemeToggle';
 									</button>
 								</div>
 							</div>
-							<div class="flex flex-col items-center justify-center gap-3 py-2">
-								<div class="w-5 h-5 rounded-full border-2 border-blue-500/20 border-t-blue-500 animate-spin"></div>
-								<p class="text-xs text-slate-400">Waiting for receiver to connect...</p>
+
+							<!-- QR Code for Mobile Scanning -->
+							<div class="space-y-2 pt-2 border-t border-white/5 flex flex-col items-center">
+								<span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Scan to Connect on Mobile</span>
+								<div class="p-2 bg-white rounded-2xl w-[140px] h-[140px] flex items-center justify-center shadow-lg">
+									<canvas id="qr-canvas"></canvas>
+								</div>
+							</div>
+
+							<div class="flex flex-col items-center justify-center gap-2 pt-1">
+								<div class="w-4 h-4 rounded-full border-2 border-blue-500/20 border-t-blue-500 animate-spin"></div>
+								<p class="text-[11px] text-slate-400">Waiting for receiver to connect...</p>
 							</div>
 						</div>
 
@@ -242,6 +251,7 @@ import ThemeToggle from '../components/ThemeToggle';
 </Layout>
 
 <script is:inline src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 
 <script is:inline>
 	(function() {
@@ -389,6 +399,14 @@ import ThemeToggle from '../components/ThemeToggle';
 			panelSend.classList.add('hidden');
 			panelSenderWaiting.classList.remove('hidden');
 			displayRoomCode.innerText = roomCode;
+
+			// Generate QR code for mobile scanning
+			const shareUrl = `${window.location.origin}${window.location.pathname}?room=${roomCode}`;
+			new QRious({
+				element: document.getElementById('qr-canvas'),
+				value: shareUrl,
+				size: 120
+			});
 
 			// Initialize PeerJS
 			peer = new Peer(roomCode);
@@ -649,6 +667,26 @@ import ThemeToggle from '../components/ThemeToggle';
 				window.location.reload();
 			});
 		}
+
+		// --- Auto-connect from Query Param ---
+		window.addEventListener('load', () => {
+			const urlParams = new URLSearchParams(window.location.search);
+			const roomParam = urlParams.get('room');
+			if (roomParam) {
+				switchTab('receive');
+				inputRoomCode.value = roomParam;
+				
+				// Show receiver active screen
+				tabsContainer.classList.add('hidden');
+				panelReceive.classList.add('hidden');
+				panelReceiverActive.classList.remove('hidden');
+				
+				// Connect
+				setTimeout(() => {
+					initializeReceiver(roomParam);
+				}, 500);
+			}
+		});
 
 	})();
 </script>
