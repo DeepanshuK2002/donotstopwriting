@@ -1,0 +1,171 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ThemeToggle from '../components/ThemeToggle';
+---
+
+<Layout 
+	title="Our Tools - Do Not Stop Writing | Free Browser-Based Utilities"
+	description="Discover our collection of free, privacy-first, browser-based web applications and tools built to enhance your creative workflow and productivity."
+>
+	<!-- Sticky top navigation bar -->
+	<header class="sticky top-0 z-50 w-full bg-white dark:bg-[#111111] border-b border-neutral-100 dark:border-neutral-900 transition-colors duration-300">
+		<div class="max-w-[1200px] mx-auto px-6 md:px-8 h-14 flex items-center justify-between">
+			<!-- Logo on left -->
+			<a 
+				href="/" 
+				id="logo" 
+				class="font-serif text-[19px] tracking-wide text-primary dark:text-neutral-100 lowercase select-none hover:opacity-85 no-underline font-normal"
+			>
+				donotstopwriting.com
+			</a>
+			<!-- Actions on right -->
+			<div class="flex items-center space-x-3">
+				<a 
+					href="/" 
+					class="flex items-center gap-1.5 px-3.5 py-1.5 border border-neutral-200 dark:border-neutral-800 rounded-lg bg-white dark:bg-neutral-950 text-xs md:text-sm font-serif font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-900 text-primary dark:text-neutral-200 shadow-sm transition-all duration-200 no-underline cursor-pointer"
+				>
+					<span class="text-xs">→</span> Start Writing
+				</a>
+				<ThemeToggle client:load />
+			</div>
+		</div>
+	</header>
+
+	<main class="w-full bg-white dark:bg-[#111111] transition-colors duration-300 min-h-screen py-16 px-6 md:px-8">
+		<div class="subpage-container flex flex-col font-serif max-w-[720px] mx-auto space-y-10">
+			<!-- Back Navigation -->
+			<div>
+				<a 
+					href="/" 
+					class="inline-flex items-center text-[13px] text-neutral-400 dark:text-neutral-500 hover:text-primary dark:hover:text-neutral-200 transition-colors duration-200 no-underline font-sans"
+				>
+					<span class="mr-1.5">←</span> Back to Home
+				</a>
+			</div>
+
+			<!-- Hero Title & Subtitle -->
+			<div class="space-y-4">
+				<h1 class="text-[32px] md:text-[38px] font-bold tracking-tight text-primary dark:text-white leading-[1.15]">
+					Our Suite of Tools
+				</h1>
+				<h2 class="text-xl md:text-[22px] font-medium text-neutral-600 dark:text-neutral-400 leading-relaxed font-serif">
+					Free, private, browser-based utilities to optimize your digital workflow.
+				</h2>
+				<p class="text-sm text-neutral-400 dark:text-neutral-500 font-sans">
+					Last updated: June 2026
+				</p>
+			</div>
+
+			<hr class="border-t border-neutral-150 dark:border-neutral-900" />
+
+			<!-- Intro Text -->
+			<div class="text-base md:text-[17px] leading-[1.8] text-neutral-800 dark:text-neutral-300">
+				<p>
+					We build web tools with a strict <strong>Privacy-First architecture</strong>. Everything we create is designed to run directly in your browser. Your files, drafts, and data never leave your local machine. No accounts, no watermarks, and no background tracking—just clean, high-performance utilities.
+				</p>
+			</div>
+
+			<!-- Tools Grid List (Inline side-by-side on desktop, stacked on mobile) -->
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+				<!-- Tool 1: Do Not Stop Writing -->
+				<a href="/" class="group relative flex flex-col justify-between p-6 rounded-2xl bg-neutral-50 dark:bg-neutral-900/40 border border-neutral-200/50 dark:border-neutral-800/80 hover:border-[#E52525]/30 dark:hover:border-[#E52525]/30 transition-all duration-300 no-underline cursor-pointer min-h-[220px]">
+					<div class="space-y-4">
+						<div class="flex items-center gap-3">
+							<div class="flex items-center justify-center w-10 h-10 rounded-lg bg-[#E52525]/10 text-[#E52525] shrink-0">
+								<!-- Custom Pencil/Timer Icon -->
+								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<line x1="12" y1="2" x2="12" y2="6"></line>
+									<line x1="12" y1="12" x2="19" y2="12"></line>
+									<circle cx="12" cy="14" r="8"></circle>
+								</svg>
+							</div>
+							<div class="text-left">
+								<h3 class="text-md font-bold text-primary dark:text-white leading-tight">donotstopwriting.com</h3>
+								<span class="text-[8px] font-sans font-bold tracking-wider text-[#E52525] bg-[#E52525]/10 px-1.5 py-0.5 rounded uppercase">Active</span>
+							</div>
+						</div>
+						<p class="text-[13px] text-neutral-600 dark:text-neutral-400 leading-relaxed font-sans text-left">
+							A dangerous writing app that deletes your progress if you stop typing. Engineered to beat screen paralysis, bypass premature editing, and train your creative flow state.
+						</p>
+					</div>
+					<div class="pt-4 text-left">
+						<span class="inline-flex items-center text-xs font-semibold text-[#E52525] group-hover:underline gap-1 font-sans">
+							Open App <span class="transition-transform group-hover:translate-x-0.5">→</span>
+						</span>
+					</div>
+				</a>
+
+				<!-- Tool 2: dropdata -->
+				<div class="group relative flex flex-col justify-between p-6 rounded-2xl bg-neutral-50 dark:bg-neutral-900/40 border border-neutral-200/50 dark:border-neutral-800/80 hover:border-blue-500/30 dark:hover:border-blue-500/30 transition-all duration-300 min-h-[220px]">
+					<div class="space-y-4">
+						<div class="flex items-center gap-3">
+							<div class="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-500/10 text-blue-500 shrink-0">
+								<!-- Lock/Encrypted file sharing Icon -->
+								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+									<path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+								</svg>
+							</div>
+							<div class="text-left">
+								<h3 class="text-md font-bold text-primary dark:text-white leading-tight">dropdata</h3>
+								<span class="text-[8px] font-sans font-bold tracking-wider text-blue-500 bg-blue-500/10 px-1.5 py-0.5 rounded uppercase">Web Utility</span>
+							</div>
+						</div>
+						<p class="text-[13px] text-neutral-600 dark:text-neutral-400 leading-relaxed font-sans text-left">
+							An end-to-end encrypted, tab-based file sharing tool. Securely send files directly to another browser tab with robust privacy protection and local key exchanges.
+						</p>
+					</div>
+					<div class="pt-4 text-left">
+						<span class="inline-flex items-center text-xs font-semibold text-blue-500 gap-1 font-sans opacity-75">
+							Coming Soon <span class="transition-transform group-hover:translate-x-0.5">·</span>
+						</span>
+					</div>
+				</div>
+			</div>
+
+			<hr class="border-t border-neutral-150 dark:border-neutral-900" />
+
+			<!-- Footer Block -->
+			<footer class="footer-container border-t border-neutral-100 dark:border-neutral-900 pt-10 mt-16 select-none font-serif max-w-[720px] mx-auto">
+				<div class="flex flex-col md:flex-row items-center justify-between gap-y-4 text-xs md:text-sm text-neutral-400 dark:text-neutral-500">
+					<!-- Left Side: Brand & Copyright -->
+					<div class="flex items-center gap-x-3">
+						<span>© 2026</span>
+						<span class="opacity-60">·</span>
+						<a href="/" class="font-serif text-[19px] tracking-wide text-primary dark:text-neutral-200 lowercase hover:opacity-85 no-underline font-normal">
+							donotstopwriting.com
+						</a>
+					</div>
+					<!-- Right Side: Links -->
+					<div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+						<a href="/about" class="hover:text-primary dark:hover:text-neutral-300 transition-colors duration-200 no-underline">About</a>
+						<span class="opacity-60">·</span>
+						<a href="/contact" class="hover:text-primary dark:hover:text-neutral-300 transition-colors duration-200 no-underline">Contact</a>
+						<span class="opacity-60">·</span>
+						<a href="/tools" class="hover:text-primary dark:hover:text-neutral-300 transition-colors duration-200 no-underline font-semibold">Tools</a>
+						<span class="opacity-60">·</span>
+						<a href="/privacy" class="hover:text-primary dark:hover:text-neutral-300 transition-colors duration-200 no-underline"><span class="hidden sm:inline">Privacy Policy</span><span class="inline sm:hidden">Privacy</span></a>
+						<span class="opacity-60">·</span>
+						<a href="/terms" class="hover:text-primary dark:hover:text-neutral-300 transition-colors duration-200 no-underline"><span class="hidden sm:inline">Terms & Conditions</span><span class="inline sm:hidden">T&C</span></a>
+					</div>
+				</div>
+			</footer>
+		</div>
+	</main>
+</Layout>
+
+<style is:global>
+	header, .subpage-container {
+		font-family: var(--font-serif), Georgia, serif !important;
+	}
+	.subpage-container {
+		width: 100% !important;
+		margin-left: auto !important;
+		margin-right: auto !important;
+	}
+	@media (min-width: 1024px) {
+		.subpage-container {
+			width: 80% !important;
+		}
+	}
+</style>
