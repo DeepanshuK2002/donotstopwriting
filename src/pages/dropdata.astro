@@ -822,12 +822,13 @@ import ThemeToggle from '../components/ThemeToggle';
 			
 			clearExpiryTimer();
 			
-			if (connection) {
+			Object.values(connections).forEach(conn => {
 				try {
-					connection.close();
+					conn.close();
 				} catch (e) {}
-				connection = null;
-			}
+			});
+			connections = {};
+			
 			if (peer) {
 				try {
 					peer.destroy();
@@ -1286,7 +1287,6 @@ import ThemeToggle from '../components/ThemeToggle';
 		const CHUNK_SIZE = 65536; // 64KB optimized chunk size for modern WebRTC
 		let isFinishing = false;
 		let isCancelled = false;
-		let isTransferring = false;
 		
 		let transferStartTime = 0;
 		let lastSpeedUpdate = 0;
@@ -1520,7 +1520,7 @@ import ThemeToggle from '../components/ThemeToggle';
 				// Show receiver active screen
 				tabsContainer.classList.add('hidden');
 				panelReceive.classList.add('hidden');
-				panelReceiverActive.classList.remove('hidden');
+				panelSharedActive.classList.remove('hidden');
 				
 				// Connect
 				setTimeout(() => {
@@ -1531,12 +1531,16 @@ import ThemeToggle from '../components/ThemeToggle';
 
 		// Explicit closed-tab detection
 		window.addEventListener('beforeunload', () => {
-			if (connection && connection.open) {
-				try {
-					connection.send({ type: 'peer-closed-tab' });
-				} catch (e) {}
-				connection.close();
-			}
+			Object.values(connections).forEach(conn => {
+				if (conn.open) {
+					try {
+						conn.send({ type: 'peer-closed-tab' });
+					} catch (e) {}
+					try {
+						conn.close();
+					} catch (e) {}
+				}
+			});
 			if (peer) {
 				peer.destroy();
 			}
