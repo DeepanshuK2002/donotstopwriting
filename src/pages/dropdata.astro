@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import ThemeToggle from '../components/ThemeToggle';
 ---
 
 <Layout 
@@ -25,8 +26,9 @@ import Layout from '../layouts/Layout.astro';
 					<a href="/contact" class="text-xs font-semibold tracking-wide uppercase text-neutral-400 hover:text-white no-underline transition-colors duration-200">Contact</a>
 				</div>
 				
-				<!-- Action Button on Right -->
-				<div class="flex items-center">
+				<!-- Action Button on Right + Theme Toggle -->
+				<div class="flex items-center gap-4">
+					<ThemeToggle client:load />
 					<a href="/dropdata" class="inline-flex items-center bg-white text-black hover:bg-neutral-100 rounded-full px-4.5 py-1.5 text-xs font-bold shadow-sm transition-all duration-200 no-underline">
 						Reset App
 					</a>
