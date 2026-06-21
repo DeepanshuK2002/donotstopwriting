@@ -46,6 +46,17 @@ import ThemeToggle from '../components/ThemeToggle';
 			</nav>
 		</div>
 
+		<!-- Global Drag & Drop Overlay -->
+		<div id="global-drag-overlay" class="fixed inset-0 z-[1000] bg-blue-500/90 backdrop-blur-md hidden flex-col items-center justify-center text-white pointer-events-none transition-opacity duration-300 opacity-0">
+			<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-bounce mb-6">
+				<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+				<polyline points="17 8 12 3 7 8"/>
+				<line x1="12" y1="3" x2="12" y2="15"/>
+			</svg>
+			<h2 class="text-4xl font-bold font-sans tracking-tight">Drop file anywhere</h2>
+			<p class="text-white/80 mt-2 font-mono">Transfer directly to peer</p>
+		</div>
+
 		<!-- Main Hero & Interface -->
 		<main class="flex-1 flex flex-col items-center justify-center px-4 py-12 md:py-16 relative z-10">
 			<div class="w-full max-w-[640px] mx-auto text-center space-y-8">
@@ -209,7 +220,7 @@ import ThemeToggle from '../components/ThemeToggle';
 									<p class="text-xs font-bold text-slate-900 dark:text-white">Drag & drop files here</p>
 									<p class="text-[10px] text-slate-500 dark:text-slate-400">Or click to browse your local device</p>
 								</div>
-								<input type="file" id="file-input" class="hidden" />
+								<input type="file" id="file-input" class="hidden" multiple />
 							</div>
 
 							<!-- Transfer Progress Block (Sender) -->
@@ -458,9 +469,12 @@ import ThemeToggle from '../components/ThemeToggle';
 		let roomCode = '';
 		let activeFile = null;
 		let fileBuffer = null;
+		let fileQueue = [];
 		let receivedChunks = [];
 		let receivedSize = 0;
 		let fileMetadata = null;
+		let isTransferring = false;
+		let receiverHideTimeout = null;
 
 		// New Session States
 		let sessionHistory = [];
@@ -628,6 +642,23 @@ import ThemeToggle from '../components/ThemeToggle';
 			const sizes = ['Bytes', 'KB', 'MB', 'GB'];
 			const i = Math.floor(Math.log(bytes) / Math.log(k));
 			return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+		}
+
+		function formatSpeed(bps) {
+			if (bps === 0) return '0 B/s';
+			const k = 1024;
+			const sizes = ['B/s', 'KB/s', 'MB/s', 'GB/s'];
+			const i = Math.floor(Math.log(bps) / Math.log(k));
+			return parseFloat((bps / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+		}
+
+		function formatETA(seconds) {
+			if (!isFinite(seconds) || seconds < 0) return 'calculating...';
+			if (seconds === 0) return 'almost done';
+			if (seconds < 60) return `${seconds}s left`;
+			const m = Math.floor(seconds / 60);
+			const s = seconds % 60;
+			return `${m}m ${s}s left`;
 		}
 
 		// --- Helper: Generate Room ID ---
@@ -918,11 +949,13 @@ import ThemeToggle from '../components/ThemeToggle';
 
 			peer.on('open', (id) => {
 				console.log('Sender peer registry open on ID:', id);
-				setupHostEnvironment();
 			});
 
 			peer.on('connection', (conn) => {
 				console.log('Peer connected to room!');
+				if (Object.keys(connections).length === 0) {
+					setupHostEnvironment();
+				}
 				addConnection(conn, true);
 			});
 
@@ -1058,7 +1091,10 @@ import ThemeToggle from '../components/ThemeToggle';
 			}
 
 			if (data.type === 'start-transfer') {
-				sendChunks();
+				if (!isTransferring) {
+					isTransferring = true;
+					sendChunks();
+				}
 				return;
 			}
 
@@ -1074,6 +1110,10 @@ import ThemeToggle from '../components/ThemeToggle';
 			}
 
 			if (data.type === 'file-meta') {
+				if (receiverHideTimeout) {
+					clearTimeout(receiverHideTimeout);
+					receiverHideTimeout = null;
+				}
 				fileMetadata = data;
 				receivedChunks = [];
 				receivedSize = 0;
@@ -1095,7 +1135,26 @@ import ThemeToggle from '../components/ThemeToggle';
 				const progress = Math.min(100, Math.trunc((receivedSize / fileMetadata.size) * 100));
 				receiverPercentage.innerText = `${progress}%`;
 				receiverProgressBar.style.width = `${progress}%`;
-				receiverStatusMsg.innerText = `Receiving package (${formatBytes(receivedSize)} / ${formatBytes(fileMetadata.size)})...`;
+				
+				if (!fileMetadata.startTime) {
+					fileMetadata.startTime = Date.now();
+					fileMetadata.lastUpdate = Date.now();
+					fileMetadata.lastBytes = 0;
+				}
+				
+				const now = Date.now();
+				if (now - fileMetadata.lastUpdate > 500) {
+					const bytesSinceUpdate = receivedSize - fileMetadata.lastBytes;
+					const timeSinceUpdate = (now - fileMetadata.lastUpdate) / 1000;
+					const speedBps = bytesSinceUpdate / timeSinceUpdate;
+					const bytesRemaining = fileMetadata.size - receivedSize;
+					const etaSeconds = speedBps > 0 ? Math.ceil(bytesRemaining / speedBps) : 0;
+					
+					receiverStatusMsg.innerText = `Receiving: ${formatSpeed(speedBps)} · ${formatETA(etaSeconds)}`;
+					
+					fileMetadata.lastUpdate = now;
+					fileMetadata.lastBytes = receivedSize;
+				}
 			} 
 			else if (data.type === 'file-done') {
 				receiverStatusMsg.innerText = 'Reassembling file packages...';
@@ -1123,73 +1182,122 @@ import ThemeToggle from '../components/ThemeToggle';
 				});
 				updateHistoryUI();
 
-				setTimeout(() => {
+				receiverHideTimeout = setTimeout(() => {
 					receiverProgressBlock.classList.add('hidden');
 					receivedChunks = [];
 					receivedSize = 0;
 					fileMetadata = null;
-				}, 5000);
+				}, 4000);
 			}
 		}
 
 		// --- DRAG AND DROP HANDLERS (SHARED) ---
-		dropzone.addEventListener('click', () => fileInput.click());
+		const globalDragOverlay = document.getElementById('global-drag-overlay');
+		let dragCounter = 0;
 
-		dropzone.addEventListener('dragover', (e) => {
+		window.addEventListener('dragenter', (e) => {
 			e.preventDefault();
-			dropzone.classList.add('border-blue-500', 'bg-blue-500/10');
-		});
-
-		dropzone.addEventListener('dragleave', () => {
-			dropzone.classList.remove('border-blue-500', 'bg-blue-500/10');
-		});
-
-		dropzone.addEventListener('drop', (e) => {
-			e.preventDefault();
-			dropzone.classList.remove('border-blue-500', 'bg-blue-500/10');
-			if (e.dataTransfer.files.length > 0) {
-				handleFileSelection(e.dataTransfer.files[0]);
+			const hasOpenConnection = Object.values(connections).some(conn => conn.open);
+			if (hasOpenConnection) {
+				dragCounter++;
+				globalDragOverlay.classList.remove('hidden');
+				requestAnimationFrame(() => globalDragOverlay.classList.remove('opacity-0'));
 			}
 		});
+
+		window.addEventListener('dragleave', (e) => {
+			e.preventDefault();
+			const hasOpenConnection = Object.values(connections).some(conn => conn.open);
+			if (hasOpenConnection) {
+				dragCounter--;
+				if (dragCounter === 0) {
+					globalDragOverlay.classList.add('opacity-0');
+					setTimeout(() => {
+						if (dragCounter === 0) globalDragOverlay.classList.add('hidden');
+					}, 300);
+				}
+			}
+		});
+
+		window.addEventListener('dragover', (e) => {
+			e.preventDefault(); // Required to allow dropping
+		});
+
+		window.addEventListener('drop', (e) => {
+			e.preventDefault();
+			dragCounter = 0;
+			globalDragOverlay.classList.add('opacity-0');
+			setTimeout(() => globalDragOverlay.classList.add('hidden'), 300);
+
+			const hasOpenConnection = Object.values(connections).some(conn => conn.open);
+			if (hasOpenConnection && e.dataTransfer.files.length > 0) {
+				handleFileSelection(e.dataTransfer.files);
+			}
+		});
+
+		dropzone.addEventListener('click', () => fileInput.click());
 
 		fileInput.addEventListener('change', (e) => {
 			if (e.target.files.length > 0) {
-				handleFileSelection(e.target.files[0]);
+				handleFileSelection(e.target.files);
 			}
 		});
 
-		function handleFileSelection(file) {
-			activeFile = file;
+		function handleFileSelection(files) {
+			const hasOpenConnection = Object.values(connections).some(conn => conn.open);
+			if (!hasOpenConnection) {
+				alert("Please wait for a peer to fully connect before sending files.");
+				return;
+			}
 			
-			// Show progress panel inside card
+			for (let i = 0; i < files.length; i++) {
+				fileQueue.push(files[i]);
+			}
+			
+			if (!isTransferring) {
+				processFileQueue();
+			} else {
+				senderStatusMsg.innerText = `Queued ${fileQueue.length} files...`;
+			}
+		}
+
+		function processFileQueue() {
+			if (fileQueue.length === 0) return;
+			activeFile = fileQueue.shift();
+			
 			dropzone.classList.add('hidden');
 			senderProgressBlock.classList.remove('hidden');
 			
-			senderFileName.innerText = file.name;
-			senderFileSize.innerText = formatBytes(file.size);
+			senderFileName.innerText = activeFile.name;
+			senderFileSize.innerText = formatBytes(activeFile.size);
 			senderPercentage.innerText = '0%';
 			senderProgressBar.style.width = '0%';
-			senderStatusMsg.innerText = 'Reading file...';
+			
+			if (fileQueue.length > 0) {
+				senderStatusMsg.innerText = `Preparing transfer (${fileQueue.length} queued)...`;
+			} else {
+				senderStatusMsg.innerText = 'Preparing transfer...';
+			}
 
-			// Read file arraybuffer
-			const reader = new FileReader();
-			reader.onload = function(e) {
-				fileBuffer = e.target.result;
-				startFileSharing();
-			};
-			reader.readAsArrayBuffer(file);
+			startFileSharing();
 		}
 
 		let offset = 0;
-		const CHUNK_SIZE = 16384; // 16KB optimized chunk size for cross-device WebRTC
+		const CHUNK_SIZE = 65536; // 64KB optimized chunk size for modern WebRTC
 		let isFinishing = false;
 		let isCancelled = false;
+		let isTransferring = false;
+		
+		let transferStartTime = 0;
+		let lastSpeedUpdate = 0;
+		let lastBytesTransferred = 0;
 
 		function startFileSharing() {
-			if (Object.keys(connections).length === 0) return;
 			offset = 0;
 			isFinishing = false;
 			isCancelled = false;
+			isTransferring = false;
+			transferStartTime = 0;
 			
 			senderStatusMsg.innerText = 'Connecting transfer protocol...';
 			btnCancelTransfer.classList.remove('hidden');
@@ -1202,12 +1310,18 @@ import ThemeToggle from '../components/ThemeToggle';
 			});
 		}
 
-		function sendChunks() {
-			if (Object.keys(connections).length === 0 || !fileBuffer || isCancelled) return;
+		async function sendChunks() {
+			if (Object.keys(connections).length === 0 || !activeFile || isCancelled) return;
 			
-			const BUFFER_LIMIT = 262144; 
-			senderStatusMsg.innerText = 'Streaming data packages...';
-
+			// Setup speed tracking
+			if (transferStartTime === 0) {
+				transferStartTime = Date.now();
+				lastSpeedUpdate = transferStartTime;
+				lastBytesTransferred = 0;
+			}
+			
+			const BUFFER_LIMIT = 524288; // 512KB for faster modern networks
+			
 			// Check if ANY connection has a full buffer
 			let bufferFull = false;
 			Object.values(connections).forEach(conn => {
@@ -1221,27 +1335,51 @@ import ThemeToggle from '../components/ThemeToggle';
 				return;
 			}
 
-			const BATCH_SIZE = 65536; // 64KB batch
+			const BATCH_SIZE = 524288; // 512KB batch
 			let sentInBatch = 0;
 
-			while (offset < fileBuffer.byteLength && sentInBatch < BATCH_SIZE && !isCancelled) {
-				const chunk = fileBuffer.slice(offset, offset + CHUNK_SIZE);
-				offset += CHUNK_SIZE;
-				sentInBatch += chunk.byteLength;
-				
-				broadcast({
-					type: 'file-chunk',
-					chunk: chunk
-				});
+			try {
+				while (offset < activeFile.size && sentInBatch < BATCH_SIZE && !isCancelled) {
+					const chunkBlob = activeFile.slice(offset, offset + CHUNK_SIZE);
+					const chunkBuf = await chunkBlob.arrayBuffer();
+					
+					offset += chunkBuf.byteLength;
+					sentInBatch += chunkBuf.byteLength;
+					
+					broadcast({
+						type: 'file-chunk',
+						chunk: chunkBuf
+					});
+				}
+			} catch (err) {
+				console.error("Error reading file slice:", err);
+				senderStatusMsg.innerHTML = '<span class="text-red-500 font-bold">Error reading file from disk.</span>';
+				return;
 			}
 
-			const progress = Math.min(100, Math.trunc((offset / fileBuffer.byteLength) * 100));
+			const progress = Math.min(100, Math.trunc((offset / activeFile.size) * 100));
 			senderPercentage.innerText = `${progress}%`;
 			senderProgressBar.style.width = `${progress}%`;
 
-			if (offset < fileBuffer.byteLength && !isCancelled) {
+			// Calculate Speed and ETA
+			const now = Date.now();
+			if (now - lastSpeedUpdate > 500) {
+				const bytesSinceUpdate = offset - lastBytesTransferred;
+				const timeSinceUpdate = (now - lastSpeedUpdate) / 1000;
+				const speedBps = bytesSinceUpdate / timeSinceUpdate;
+				
+				const bytesRemaining = activeFile.size - offset;
+				const etaSeconds = speedBps > 0 ? Math.ceil(bytesRemaining / speedBps) : 0;
+				
+				senderStatusMsg.innerText = `Sending: ${formatSpeed(speedBps)} · ${formatETA(etaSeconds)}`;
+				
+				lastSpeedUpdate = now;
+				lastBytesTransferred = offset;
+			}
+
+			if (offset < activeFile.size && !isCancelled) {
 				setTimeout(sendChunks, 0);
-			} else if (offset >= fileBuffer.byteLength && !isFinishing && !isCancelled) {
+			} else if (offset >= activeFile.size && !isFinishing && !isCancelled) {
 				isFinishing = true;
 				checkBufferAndFinish();
 			}
@@ -1266,6 +1404,7 @@ import ThemeToggle from '../components/ThemeToggle';
 				senderProgressBar.style.width = '100%';
 				senderStatusMsg.innerHTML = '<span class="text-emerald-450 font-bold">✓ File transferred successfully!</span>';
 				btnCancelTransfer.classList.add('hidden');
+				isTransferring = false;
 				
 				sessionHistory.push({
 					filename: activeFile.name,
@@ -1275,13 +1414,18 @@ import ThemeToggle from '../components/ThemeToggle';
 				});
 				updateHistoryUI();
 
-				setTimeout(() => {
-					dropzone.classList.remove('hidden');
-					senderProgressBlock.classList.add('hidden');
-					fileInput.value = '';
-					activeFile = null;
-					fileBuffer = null;
-				}, 4000);
+				if (fileQueue.length > 0) {
+					setTimeout(() => {
+						processFileQueue();
+					}, 1000);
+				} else {
+					setTimeout(() => {
+						dropzone.classList.remove('hidden');
+						senderProgressBlock.classList.add('hidden');
+						fileInput.value = '';
+						activeFile = null;
+					}, 4000);
+				}
 			} else {
 				setTimeout(checkBufferAndFinish, 100);
 			}
@@ -1339,6 +1483,8 @@ import ThemeToggle from '../components/ThemeToggle';
 			btnCancelTransfer.addEventListener('click', () => {
 				if (Object.keys(connections).length === 0 || isCancelled || isFinishing) return;
 				isCancelled = true;
+				isTransferring = false;
+				fileQueue = [];
 				broadcast({ type: 'file-cancel' });
 				
 				senderStatusMsg.innerHTML = '<span class="text-red-500 font-bold">Transfer cancelled.</span>';
